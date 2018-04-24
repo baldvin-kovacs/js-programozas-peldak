@@ -2,6 +2,9 @@ let ctx;
 
 let uirany = 0;
 let lo = false;
+let lovesSzam = 0;
+
+let szoveg;
 
 // A touchBaloldaliHatar lesz az az x koordináta, aminél
 // kisebb koordinátájú pontot kell érinteni ahhoz, hogy lojon.
@@ -9,7 +12,8 @@ let lo = false;
 // A touchJobboldaliHatar lesz az az x koordináta, aminél
 // nagyobb koordinátájú pontot kell érinteni ahhoz, hogy
 // jobbra menjen.
-let touchJobboldaliHatar;
+let touchJobboldaliHatar1;
+let touchJobboldaliHatar2;
 
 function tapi(e) {
     // A preventDefault megakadályozza, hogy a touch event
@@ -22,6 +26,7 @@ function tapi(e) {
 	if (e.type == "touchstart") {
 	    if (t.clientX < touchBaloldaliHatar) {
 		lo = true;
+		lovesSzam++;
 		continue;
 	    }
 	    if (t.clientX > touchJobboldaliHatar1 &&
@@ -29,8 +34,7 @@ function tapi(e) {
 		uirany = -1;
 		continue;
 	    }
-	    if (t.clientX > touchJobboldaliHatar1 &&
-		t.clientX < touchJobboldaliHatar2) {
+	    if (t.clientX > touchJobboldaliHatar2) {
 		uirany = 1;
 		continue;
 	    }
@@ -41,8 +45,7 @@ function tapi(e) {
 		uirany = 0;
 		continue;
 	    }
-	    if (t.clientX > touchJobboldaliHatar1 &&
-		t.clientX < touchJobboldaliHatar2) {
+	    if (t.clientX > touchJobboldaliHatar2) {
 		uirany = 0;
 		continue;
 	    }
@@ -55,8 +58,10 @@ function lep() {
 
     ctx.font = '22px sans';
 
+    ctx.strokeText("Verzió: 1.5", 700, 50);
+
     if (lo) {
-	ctx.strokeText('Lő!!', 50, 50);
+	ctx.strokeText(`Lő!! (Lövésszám: ${lovesSzam})`, 50, 50);
     } else {
 	ctx.strokeText('Nem lő.', 50, 50);
     }
@@ -73,16 +78,23 @@ function lep() {
 }
 
 function run() {
-    ablakSzelesseg = window.innerWidth;
+    const ablakSzelesseg = window.innerWidth;
+    const ablakMagassag = window.innerHeight;
 
     touchBaloldaliHatar = ablakSzelesseg * 0.2;
-    touchJobboldaliHatar = ablakSzelesseg * 0.8;
+    touchJobboldaliHatar1 = ablakSzelesseg * 0.6;
+    touchJobboldaliHatar2 = ablakSzelesseg * 0.8;
     
     const cnvs = document.getElementById("cnvs");
+
+    cnvs.style.width = `${ablakSzelesseg}px`;
+    cnvs.style.height = `${ablakMagassag}px`;
 
     cnvs.ontouchstart = tapi;
     cnvs.ontouchend = tapi;
     cnvs.ontouchcancel = tapi;
+
+    szoveg = document.getElementById("szoveg");
 
     ctx = cnvs.getContext("2d");
     requestAnimationFrame(lep);
